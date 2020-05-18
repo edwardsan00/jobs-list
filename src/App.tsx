@@ -1,26 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import jss from 'jss'
+import preset from 'jss-preset-default'
+import { SheetsRegistry } from 'react-jss'
+import { JssProvider } from 'react-jss'
+import ApolloClient from 'apollo-boost'
+import { ApolloProvider } from '@apollo/react-hooks'
+import { InMemoryCache } from 'apollo-cache-inmemory';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import RouterMain from './routes'
+
+const client = new ApolloClient({
+  uri: 'https://api.graphql.jobs/',
+  cache: new InMemoryCache()
+})
+
+const setupJss = () => {
+  jss.setup(preset())
+  const sheetsRegistry = new SheetsRegistry();
+
+  const globalStyleSheet = jss.createStyleSheet(
+    {
+      '@global': {
+        '*': {
+          margin: 0,
+          padding: 0,
+          boxSizing: 'border-box'
+        },
+        body: {
+          backgroundColor: '#F7F7F9',
+          fontFamily: 'Roboto, sans- serif'
+        }
+      }
+    }
+  ).attach()
+
+  sheetsRegistry.add(globalStyleSheet)
+
+  return sheetsRegistry
 }
 
-export default App;
+const sheets = setupJss()
+
+
+const App = () => {
+  return (
+    <ApolloProvider client={client}>
+      <JssProvider registry={sheets}>
+        <RouterMain />
+      </JssProvider>
+    </ApolloProvider>
+  )
+}
+
+export default App
