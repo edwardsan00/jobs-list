@@ -1,12 +1,12 @@
 import React from 'react'
 import jss from 'jss'
 import preset from 'jss-preset-default'
-import { SheetsRegistry } from 'react-jss'
-import { JssProvider } from 'react-jss'
+import { SheetsRegistry, JssProvider, ThemeProvider } from 'react-jss'
 import ApolloClient from 'apollo-boost'
 import { ApolloProvider } from '@apollo/react-hooks'
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
+import { CustomTheme } from './interface/common'
 import RouterMain from './routes'
 
 const client = new ApolloClient({
@@ -41,12 +41,20 @@ const setupJss = () => {
 
 const sheets = setupJss()
 
+const themeDefault: CustomTheme = {
+  black: '#24292e',
+  gray: '#eff3f6',
+  gray2: '#a4aaaf',
+  gray5: '#e0e1e2'
+}
 
 const App = () => {
   return (
     <ApolloProvider client={client}>
       <JssProvider registry={sheets}>
-        <RouterMain />
+        <ThemeProvider theme={themeDefault}>
+          <RouterMain />
+        </ThemeProvider>
       </JssProvider>
     </ApolloProvider>
   )
