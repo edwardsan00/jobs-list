@@ -3,15 +3,11 @@ import PropTypes from 'prop-types'
 import { createUseStyles, useTheme } from 'react-jss'
 
 import { CustomTheme } from '../../../interface/common'
-
-interface ListItems {
-  name: string
-  slug: string
-}
+import { BasicInfo } from '../../../container/views/Jobs'
 
 interface Props {
   title: string
-  listItems: Array<ListItems>
+  listItems: Array<BasicInfo>
   onHandleFilter: (filter:string, slug: string) => void
 }
 
@@ -89,9 +85,9 @@ const FilterBox: FunctionComponent<Props> = ({ title, listItems, onHandleFilter 
     <div className={classes.containerFilter}>
       <h4 className={classes.title}>{title}</h4>
       <div className={classes.containerList}>
-        {listItems.map(({ name, slug }) => {
+        {listItems.map(({ name, slug, id }) => {
           return (
-            <div className={classes.checkContainer}>
+            <div key={id} className={classes.checkContainer}>
               <input type="checkbox" id={slug} />
               <label onClick={() => _handleFilter(slug)} htmlFor={slug}>{name}</label>
             </div>
@@ -105,6 +101,7 @@ const FilterBox: FunctionComponent<Props> = ({ title, listItems, onHandleFilter 
 FilterBox.propTypes = {
   title: PropTypes.string.isRequired,
   listItems: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     slug: PropTypes.string.isRequired
   }).isRequired).isRequired,

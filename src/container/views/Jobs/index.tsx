@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { createUseStyles, useTheme } from 'react-jss'
+import { useQuery } from '@apollo/react-hooks'
 
 import { CustomTheme} from '../../../interface/common'
 import SearchJobs from '../../../components/Jobs/SearchJobs'
 import ItemJob from '../../../components/Jobs/ItemJob'
 import FilterBox from '../../../components/Jobs/FilterBox'
+import { GET_JOBS, GET_COUNTRIES, GET_COMPANIES } from '../../../schemas/Job'
 
 const useStyles = createUseStyles((theme: CustomTheme) => ({
   containerJobs: {
@@ -19,11 +21,14 @@ const useStyles = createUseStyles((theme: CustomTheme) => ({
   },
   wrapperFilters: {
     display: 'none',
-    '@media screen and (min-width: 768px)': {
+    '@media screen and (min-width: 1024px)': {
       display: 'flex',
       flexDirection: 'column',
-      flex: '250px 0 0',
+      flex: '200px 0 0',
       marginRight: '50px'
+    },
+    '@media screen and (min-width: 1200px)': {
+      flex: '250px 0 0',
     }
   },
   wrapperList: {
@@ -31,9 +36,78 @@ const useStyles = createUseStyles((theme: CustomTheme) => ({
   }
 }))
 
+type Commitment = {
+  title: string
+  slug: string
+}
+
+export interface BasicInfo {
+  id: string
+  name: string
+  slug: string
+}
+
+interface Country extends BasicInfo{}
+
+interface City extends BasicInfo {
+  country: Country
+}
+
+type Remote = {
+  name: string
+  type: string
+}
+
+interface Company {
+  name: string
+  logoUrl?: string
+}
+
+interface Jobs {
+  id: string
+  title: string
+  slug: string
+  commitment: Commitment
+  cities: Array<City>
+  remotes: Array<Remote> | null
+  company: Company
+  isPublished: boolean
+  isFeatured: boolean
+  locationNames: string
+  userEmail: string
+  postedAt: string
+  tags: Array<BasicInfo>
+}
+
 const Jobs = (): JSX.Element => {
   const theme = useTheme()
   const classes = useStyles(theme)
+  const [itemsJob, setItemsJob ] = useState<Array<Jobs>>([])
+  const [listCountries, setListCountries] = useState<Array<BasicInfo>>([])
+  const [listCompanies, setListCompanies] = useState<Array<BasicInfo>>([])
+
+
+  const { loading: loadingJobs, data: { jobs = [] } = {} } = useQuery(GET_JOBS)
+  const { loading: loadingCountry, data: { countries = [] } = {} } = useQuery(GET_COUNTRIES)
+  const { loading: loadingCompany, data: { companies = [] } = {} } = useQuery(GET_COMPANIES)
+  
+  console.log("===> Edward <===: jobs", jobs)
+  useEffect(() => {
+    if (!loadingJobs && jobs.length && !itemsJob.length){
+
+      setItemsJob(jobs)
+    }
+  }, [itemsJob.length, jobs, loadingJobs])
+
+  useEffect(() => {
+    if (!loadingCountry && countries.length && !listCountries.length)
+      setListCountries(countries)
+  }, [countries, listCountries.length, loadingCountry])
+
+  useEffect(() => {
+    if (!loadingCompany && companies.length && !listCompanies.length)
+      setListCompanies(companies)
+  }, [companies, listCompanies.length, loadingCompany])
 
   const _handleSearch = (search: string) => {
     console.log(search)
@@ -50,34 +124,31 @@ const Jobs = (): JSX.Element => {
         <div className={classes.wrapperFilters}>
           <FilterBox
             title='Jobs' 
-            listItems={[{
-              name: 'Test',
-              slug: 'Test'
-            }]} 
+            listItems={listCountries} 
             onHandleFilter={_handleFilter} 
           />
           <FilterBox
             title='Country'
-            listItems={[{
-              name: 'Panama',
-              slug: 'panama'
-            }]}
+            listItems={listCompanies}
             onHandleFilter={_handleFilter}
           />
         </div>
         <div className={classes.wrapperList}>
-          {[1,2,3].map(() => {
+          {itemsJob.length ? itemsJob.map(({ id, title, slug, cities, company, tags, commitment }) => {
+            const city = cities.map(({ name }) => name)[0] || ''
             return (
               <ItemJob 
-                title='Senior Fullstack Engineer - Platform'
-                city='San Francisco'
-                company='Spotify'
-                tags={['Full Stack', 'React', 'Node']}
-                logoUrl='https://logo.clearbit.com/segment.com?size=200'
-                typeContract='Fulltime'
+                key={id}
+                title={title}
+                slug={slug}
+                city={city}
+                company={company.name}
+                tags={tags.map(({ name }) => name)}
+                logoUrl={company.logoUrl}
+                typeContract={commitment.title}
               />
             )
-          })}
+          }): null}
         </div>
       </div>
     </div>

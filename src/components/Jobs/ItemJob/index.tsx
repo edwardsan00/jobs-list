@@ -1,8 +1,10 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, useState } from 'react'
 import PropTypes from 'prop-types'
 import { createUseStyles, useTheme } from 'react-jss'
+import clsx from 'clsx'
 
 import { CustomTheme } from '../../../interface/common'
+import { CompanyEmpty } from '../../Icons'
 
 const useStyles = createUseStyles((theme: CustomTheme) => ({
   containerItem: {
@@ -35,6 +37,13 @@ const useStyles = createUseStyles((theme: CustomTheme) => ({
   },
   wrapperLogo: {
     flex: '60px 0 0',
+    height: '60px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  wrapperLogoBg: {
+    backgroundColor: theme.gray
   },
   logo: {
     width: '100%',
@@ -84,7 +93,10 @@ const useStyles = createUseStyles((theme: CustomTheme) => ({
     // }
   },
   wrapperLocation: {
-
+    maxWidth: '120px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-end'
   },
   typeContract: {
     fontWeight: '400'
@@ -96,8 +108,9 @@ const useStyles = createUseStyles((theme: CustomTheme) => ({
 
 interface Props {
   title: string
+  slug: string
   company: string
-  city: string
+  city?: string
   tags: Array<string>
   typeContract?: string
   logoUrl?: string
@@ -106,11 +119,14 @@ interface Props {
 const ItemJob: FunctionComponent<Props> = ({ title, city,company, tags, logoUrl, typeContract }: Props) => {
   const theme = useTheme()
   const classes = useStyles(theme)
+  const [imgError, setImgError] = useState<boolean>(false)
   return (
     <div className={classes.containerItem}>
       <div className={classes.left}>
-        <div className={classes.wrapperLogo}>
-          <img src={logoUrl} alt={title} className={classes.logo} />
+        <div className={clsx([classes.wrapperLogo], { [classes.wrapperLogoBg]: !logoUrl })}>
+          {logoUrl && !imgError ? (
+            <img src={logoUrl} onError={() => setImgError(true)} alt={title} className={classes.logo} />
+          ) : (<CompanyEmpty />)}
         </div>
         <div className={classes.wrapperDetail}>
         <p className={classes.title}>{title}</p>
@@ -121,16 +137,16 @@ const ItemJob: FunctionComponent<Props> = ({ title, city,company, tags, logoUrl,
         <div className={classes.wrapperTags}>
           {tags.map((tag) => {
             return (
-              <div className={classes.boxTag}>
+              <div key={tag} className={classes.boxTag}>
                 <p className={classes.tag}>{tag}</p>
               </div>
             )
           })}
         </div>
         <div className={classes.wrapperLocation}>
-        <p className={classes.typeContract}>{typeContract}</p>
-        <p className={classes.location}>{city}</p>
-      </div>
+          <p className={classes.typeContract}>{typeContract}</p>
+          <p className={classes.location}>{city}</p>
+        </div>
       </div>
     </div>
   )
@@ -138,8 +154,9 @@ const ItemJob: FunctionComponent<Props> = ({ title, city,company, tags, logoUrl,
 
 ItemJob.propTypes = {
   title: PropTypes.string.isRequired,
+  slug: PropTypes.string.isRequired,
   company: PropTypes.string.isRequired,
-  city: PropTypes.string.isRequired,
+  city: PropTypes.string,
   tags: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
   typeContract: PropTypes.string,
   logoUrl: PropTypes.string,

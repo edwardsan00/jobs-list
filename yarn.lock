@@ -1068,6 +1068,11 @@
   resolved "https://registry.yarnpkg.com/@emotion/memoize/-/memoize-0.7.1.tgz#e93c13942592cf5ef01aa8297444dc192beee52f"
   integrity sha512-Qv4LTqO11jepd5Qmlp3M1YEjBumoTHcHFdgPTQ+sFlIL5myi/7xu/POwP7IRu6odBdmLXdtIs1D6TuW6kbwbbg==
 
+"@grovertb/react-skeletor@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@grovertb/react-skeletor/-/react-skeletor-1.0.3.tgz#4c211f449613c457f03d9aab36147b8add9099f9"
+  integrity sha512-hjfly2uqBKGGe9UrVp9lIuiDPEtyvMvLNbPaWcy9g27Ngz/S8/ZGNlWJTYyw75rnlkz8M/fAfFMS2K8/5Hoghg==
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
