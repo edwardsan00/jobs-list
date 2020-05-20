@@ -67,8 +67,7 @@ const SearchJobs: FunctionComponent<Props>  = ({ onHandleSearch }: Props): JSX.E
   }
 
   const _handleSubmitSearch = () => {
-    if(search !== '')
-      onHandleSearch(search)
+    onHandleSearch(search)
   }
 
   return (

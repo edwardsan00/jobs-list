@@ -50,6 +50,7 @@ export const GET_JOBS = gql`
         slug
       }
       company{
+        slug
         name
         logoUrl
       }

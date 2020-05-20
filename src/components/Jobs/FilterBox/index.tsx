@@ -3,12 +3,12 @@ import PropTypes from 'prop-types'
 import { createUseStyles, useTheme } from 'react-jss'
 
 import { CustomTheme } from '../../../interface/common'
-import { BasicInfo } from '../../../container/views/Jobs'
+import { BasicInfo, FilterType } from '../../../container/views/Jobs'
 
 interface Props {
-  title: string
+  title: FilterType
   listItems: Array<BasicInfo>
-  onHandleFilter: (filter:string, slug: string) => void
+  onHandleFilter: (filter:FilterType, slug: string) => void
 }
 
 const useStyles = createUseStyles((theme: CustomTheme) => ({
@@ -17,7 +17,8 @@ const useStyles = createUseStyles((theme: CustomTheme) => ({
     marginBottom: '25px'
   },
   title: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    textTransform: 'capitalize'
   },
   containerCheckbox: {
 
@@ -99,7 +100,7 @@ const FilterBox: FunctionComponent<Props> = ({ title, listItems, onHandleFilter 
 }
 
 FilterBox.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.oneOf<FilterType>(["country", "company"]).isRequired,
   listItems: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,

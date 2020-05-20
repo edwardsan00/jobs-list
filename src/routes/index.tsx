@@ -15,7 +15,7 @@ const RouterMain = () => {
             <Switch>
               <Route exact path="/" render={() => (<Redirect to="/jobs" />)} />
               <Route path='/jobs' exact component={Jobs} />
-              <Route path='/job:id' component={Detail} />
+              <Route path='/job/:id' component={Detail} />
               <Route path="*" component={NotFound} />   
             </Switch>
           </Main>
